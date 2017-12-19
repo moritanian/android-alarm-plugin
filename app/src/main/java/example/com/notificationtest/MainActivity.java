@@ -50,6 +50,28 @@ public class MainActivity extends Activity {
             }
 
         });
+
+        Button btn3 = (Button)findViewById(R.id.button3);
+        btn3.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick3");
+                MyAlarmManager.stopAlarm(MainActivity.this, aid - 1);
+            }
+
+        });
+
+        Button btn4 = (Button)findViewById(R.id.button4);
+        btn4.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick3");
+                MyAlarmManager.addNotification(MainActivity.this, aid-1, "通知名2", "通知タイトル2", "通知ラベル2", 5);
+            }
+
+        });
     }
 
 }

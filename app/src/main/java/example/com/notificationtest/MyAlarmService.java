@@ -11,18 +11,9 @@ public class MyAlarmService extends Service {
     private Intent amIntent;
     @Override
     public IBinder onBind(Intent intent) {
-       // amIntent = intent;
         return null;
     }
 
-    @Override
-    public void onCreate() {
-        /*
-        Thread thr = new Thread(null, mTask, "MyAlarmServiceThread");
-        thr.start();
-        Log.v(TAG,"スレッド開始");
-        */
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

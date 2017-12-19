@@ -43,6 +43,7 @@ public class MyAlarmManager {
         c.add(Calendar.SECOND, secondsFromNow);
         addNotification(con, id, name, title, label, c);
     }
+
     public static void addNotification(Context con, int id, String name, String title, String label,  Calendar c){
 
         Intent intent = new Intent(con, MyAlarmService.class);
@@ -58,7 +59,7 @@ public class MyAlarmManager {
     }
 
     private static void setAlarmManager(Context con, int id, Intent intent, Calendar c){
-        PendingIntent pendingIntent = PendingIntent.getService(con, PendingIntent.FLAG_ONE_SHOT, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getService(con, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager manager = (AlarmManager)con.getSystemService(con.ALARM_SERVICE);
         manager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }

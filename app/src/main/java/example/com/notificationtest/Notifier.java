@@ -16,12 +16,13 @@ public class Notifier extends BroadcastReceiver {
     @Override
     public void onReceive(Context content, Intent intent) {
 
-        Toast.makeText(content, "Alarm Received!", Toast.LENGTH_SHORT).show();
         Log.d("AlarmReceiver", "Alarm Received! : " + intent.getIntExtra(Intent.EXTRA_ALARM_COUNT, 0));
 
         //通知がクリックされた時に発行されるIntentの生成
         Intent sendIntent = new Intent(content, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(content, 0, sendIntent, 0);
+
+        Integer priId = intent.getIntExtra("pri_id" ,0);
 
         //通知オブジェクトの生成
         Notification noti = new NotificationCompat.Builder(content)
@@ -35,7 +36,7 @@ public class Notifier extends BroadcastReceiver {
                 .build();
 
         NotificationManager manager = (NotificationManager)content.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0, noti);
+        manager.notify(priId, noti);
 
     }
 
