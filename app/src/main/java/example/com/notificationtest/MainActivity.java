@@ -36,64 +36,14 @@ public class MainActivity extends Activity {
                 Calendar triggerTime = Calendar.getInstance();
                 triggerTime.add(Calendar.SECOND, 5);	//今から5秒後
 
-                //設定した日時で発行するIntentを生成
-                Intent intent = new Intent(MainActivity.this, Notifier.class);
-                //Intent intent = new Intent();
-                //intent.setAction(ACTION_TEXT_UPDATE);
-
-                PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intent,0);
-
+                Intent intent = new Intent(MainActivity.this, MyAlarmService.class);
+                PendingIntent pendingIntent = PendingIntent.getService(MainActivity.this, PendingIntent.FLAG_ONE_SHOT, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 AlarmManager manager = (AlarmManager)getSystemService(ALARM_SERVICE);
-                manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), sender);
-
-                finish();
+                manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), pendingIntent);
+               // finish();
             }
 
         });
-    }
-
-    protected void onResume() {
-
-        super.onResume();
-
-        //Intent Filter登録
-
-        IntentFilter filter = new IntentFilter();
-
-        filter.addAction(ACTION_TEXT_UPDATE);
-
-        registerReceiver(broadcastReceiver,filter);  //BroadCastreceiverに登録
-
-    }
-
-    protected void onPause() {
-
-        super.onPause();
-
-        //登録解除
-
-        unregisterReceiver(broadcastReceiver);
-
-    }
-
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver(){ // インナーサブクラス
-
-
-
-        @Override
-        public void onReceive(Context context, Intent intent){
-
-            Log.i("broadcastreceiver", "onReceive");
-
-        }
-
-    };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
 }
