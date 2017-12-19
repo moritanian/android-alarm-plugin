@@ -5,11 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="example.com.notificationtest.MainActivity">
-
+<LinearLayout
+    android:id="@+id/R1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <LinearLayout
         android:id="@+id/p1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/button1"
@@ -40,6 +44,19 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:text="update" />
+
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/p2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="kill" />
+    </LinearLayout>
+</LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

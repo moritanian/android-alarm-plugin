@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick2");
-                MyAlarmManager.addAlarm(MainActivity.this, aid, 5);
+                MyAlarmManager.addAlarm(MainActivity.this, aid, 20);
                 aid ++;
 
             }
@@ -67,8 +67,20 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick3");
+                Log.d(TAG, "onClick4");
                 MyAlarmManager.addNotification(MainActivity.this, aid-1, "通知名2", "通知タイトル2", "通知ラベル2", 5);
+            }
+
+        });
+
+        Button btn5 = (Button)findViewById(R.id.button5);
+        btn5.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick5");
+                android.os.Process.killProcess(android.os.Process.myPid());
+
             }
 
         });

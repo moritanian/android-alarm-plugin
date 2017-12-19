@@ -60,14 +60,4 @@ public class AlarmNotificationActivity extends Activity {
             mp.release();
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        /*
-        alarmNowText = (TextView) findViewById(R.id.alarm_now_time);
-        handler.sendEmptyMessage(WHAT);
-        // mam.stopAlarm();
-    }*/
-    }
 }
