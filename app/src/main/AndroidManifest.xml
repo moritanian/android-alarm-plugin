@@ -23,7 +23,13 @@
 
         <receiver android:name="AlarmReceiver" >
             <intent-filter>
-                <action android:name="MyAlarmAction"></action>
+                <action android:name="ACTION_ALARM"></action>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="example.com.notificationtest.Notifier">
+            <intent-filter>
+                <action android:name="ACTION_NOTIFICATION"></action>
             </intent-filter>
         </receiver>
 

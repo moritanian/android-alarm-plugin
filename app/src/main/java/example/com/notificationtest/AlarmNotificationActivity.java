@@ -1,6 +1,7 @@
 package example.com.notificationtest;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 public class AlarmNotificationActivity extends Activity {
     private MediaPlayer mp;
+    private  Intent intent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,11 @@ public class AlarmNotificationActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         stopAndRelaese();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        this.intent = intent;
     }
 
     private void stopAndRelaese() {

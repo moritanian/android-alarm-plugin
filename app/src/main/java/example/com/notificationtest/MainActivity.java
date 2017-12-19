@@ -1,16 +1,15 @@
 package example.com.notificationtest;
 import java.util.Calendar;
 
-import android.content.BroadcastReceiver;
+
 import android.content.Context;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.util.Log;
-import android.view.Menu;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -20,27 +19,34 @@ public class MainActivity extends Activity {
 
     private static final String ACTION_TEXT_UPDATE = "example.com.ACTION_TEXT_UPDATE";
 
+    private int aid = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btn = (Button)findViewById(R.id.button1);
-        btn.setOnClickListener(new OnClickListener() {
+        Button btn1 = (Button)findViewById(R.id.button1);
+        btn1.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick");
+                Log.d(TAG, "onClick1");
+                MyAlarmManager.addNotification(MainActivity.this, aid, "通知名", "通知タイトル", "通知ラベル", 5);
+                aid ++;
+            }
 
-                //呼び出す日時を設定する
-                Calendar triggerTime = Calendar.getInstance();
-                triggerTime.add(Calendar.SECOND, 5);	//今から5秒後
+        });
 
-                Intent intent = new Intent(MainActivity.this, MyAlarmService.class);
-                PendingIntent pendingIntent = PendingIntent.getService(MainActivity.this, PendingIntent.FLAG_ONE_SHOT, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                AlarmManager manager = (AlarmManager)getSystemService(ALARM_SERVICE);
-                manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), pendingIntent);
-               // finish();
+        Button btn2 = (Button)findViewById(R.id.button2);
+        btn2.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick2");
+                MyAlarmManager.addAlarm(MainActivity.this, aid, 5);
+                aid ++;
+
             }
 
         });
