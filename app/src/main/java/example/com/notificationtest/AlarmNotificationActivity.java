@@ -28,14 +28,14 @@ public class AlarmNotificationActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        Toast.makeText(this, "アラーム！", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "アラーム！", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Toast.makeText(getApplicationContext(), "アラームスタート！", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "アラームスタート！", Toast.LENGTH_LONG).show();
         // 音を鳴らす
         if (mp == null)
             // resのrawディレクトリにtest.mp3を置いてある

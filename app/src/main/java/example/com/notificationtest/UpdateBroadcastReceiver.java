@@ -13,6 +13,20 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         String packagePath = intent.getDataString(); // package:app.package.name
 
-        MyAlarmManager.addAlarm(context, 0, 1);
+        switch(action) {
+            case Intent.ACTION_BOOT_COMPLETED:
+                Log.i("UpdateBroadcastReceiver", "BOOT_COMPLETED");
+
+                break;
+            case Intent.ACTION_MY_PACKAGE_REPLACED:
+                Log.i("UpdateBroadcastReceiver", "MyPackageReplaced");
+            default:
+                break;
+        }
+
+        Log.i("UpdateBroadcastReceiver", action.toString());
+
+        MyAlarmManager.reregisterAlarm(context);
+        //MyAlarmManager.addAlarm(context, 0, 1);
     }
 }

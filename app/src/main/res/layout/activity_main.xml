@@ -7,9 +7,11 @@
     tools:context="example.com.notificationtest.MainActivity">
 <LinearLayout
     android:id="@+id/R1"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_width="368dp"
+    android:layout_height="495dp"
+    android:orientation="vertical"
+    tools:layout_editor_absoluteY="8dp"
+    tools:layout_editor_absoluteX="8dp">
     <LinearLayout
         android:id="@+id/p1"
         android:layout_width="match_parent"
@@ -56,7 +58,45 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:text="kill" />
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="reregister" />
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="multiple" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/p3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+        <EditText
+            android:id="@+id/time_sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textColor="#0000ff"
+            android:text="12"
+            >
+        </EditText>
+
+        <EditText
+            android:id="@+id/current_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="1"
+            android:layout_marginLeft="100px"
+            android:paddingLeft="20px"
+            android:textColor="#0000ff"></EditText>
+    </LinearLayout>
+
 </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

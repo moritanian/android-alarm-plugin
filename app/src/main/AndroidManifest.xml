@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="AlarmReceiver" >
+        <receiver android:name="example.com.notificationtest.AlarmReceiver" >
             <intent-filter>
                 <action android:name="ACTION_ALARM"></action>
             </intent-filter>
@@ -35,11 +35,13 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".UpdateBroadcastReceiver">
+        <receiver android:name="example.com.notificationtest.UpdateBroadcastReceiver"
+            android:enabled="true" android:exported="true">
             <intent-filter>
-                <!--<action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>-->
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+               <!-- <action android:name="android.intent.action.USER_PRESENT" />-->
                 <!--<data android:scheme="package" />-->
             </intent-filter>
         </receiver>

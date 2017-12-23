@@ -16,7 +16,7 @@ public class Notifier extends BroadcastReceiver {
     @Override
     public void onReceive(Context content, Intent intent) {
 
-        Log.d("AlarmReceiver", "Alarm Received! : " + intent.getIntExtra(Intent.EXTRA_ALARM_COUNT, 0));
+        Log.d("AlarmReceiver", "Alarm Received! : " + intent.getIntExtra(Intent.EXTRA_ALARM_COUNT, 0) + " " + intent.getType());
 
         //通知がクリックされた時に発行されるIntentの生成
         Intent sendIntent = new Intent(content, MainActivity.class);
@@ -26,9 +26,9 @@ public class Notifier extends BroadcastReceiver {
 
         //通知オブジェクトの生成
         Notification noti = new NotificationCompat.Builder(content)
-                .setTicker(intent.getStringExtra("title"))
-                .setContentTitle( intent.getStringExtra("name"))
-                .setContentText( intent.getStringExtra("label"))
+                .setTicker(intent.getStringExtra("ticker"))
+                .setContentTitle( intent.getStringExtra("title"))
+                .setContentText( intent.getStringExtra("text"))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setVibrate(new long[]{0, 200, 100, 200, 100, 200})
                 .setAutoCancel(true)
@@ -38,6 +38,8 @@ public class Notifier extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager)content.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(priId, noti);
 
+        // 実行されたので削除
+        MyAlarmManager.deleteNotificationAlarmFromPrefs(content, priId);
     }
 
 }

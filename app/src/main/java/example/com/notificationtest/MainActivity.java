@@ -13,13 +13,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends Activity {
     public final String TAG = MainActivity.class.getName();
 
     private static final String ACTION_TEXT_UPDATE = "example.com.ACTION_TEXT_UPDATE";
 
-    private int aid = 0;
+    private int aid = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +33,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick1");
-                MyAlarmManager.addNotification(MainActivity.this, aid, "通知名", "通知タイトル", "通知ラベル", 5);
+                MyAlarmManager.addNotification(MainActivity.this, aid, "通知名" + aid, "通知タイトル" + aid, "通知ラベル" + aid, getTimeSec());
                 aid ++;
+                setCurrentId(aid);
             }
 
         });
@@ -44,9 +46,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick2");
-                MyAlarmManager.addAlarm(MainActivity.this, aid, 20);
+                MyAlarmManager.addAlarm(MainActivity.this, aid, getTimeSec());
                 aid ++;
-
+                setCurrentId(aid);
             }
 
         });
@@ -57,7 +59,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick3");
-                MyAlarmManager.stopAlarm(MainActivity.this, aid - 1);
+                MyAlarmManager.resetAll(MainActivity.this);
+                MyAlarmManager.clearNotification(MainActivity.this, getCurrentId());
             }
 
         });
@@ -68,7 +71,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick4");
-                MyAlarmManager.addNotification(MainActivity.this, aid-1, "通知名2", "通知タイトル2", "通知ラベル2", 5);
+                MyAlarmManager.addNotification(MainActivity.this, aid-1, "name2", "title2", "label2", getTimeSec());
             }
 
         });
@@ -84,6 +87,55 @@ public class MainActivity extends Activity {
             }
 
         });
+
+        Button btn6 = (Button)findViewById(R.id.button6);
+        btn6.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick6");
+                MyAlarmManager.reregisterAlarm(MainActivity.this);
+
+            }
+
+        });
+        Button btn7 = (Button)findViewById(R.id.button7);
+        btn7.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick7");
+                /*
+                for (int i=0;i<3; i++) {
+                    MyAlarmManager.addNotification(MainActivity.this, i+100, "multi" + i , "multi" + i , "multi" + i, getTimeSec());
+                }*/
+                for (int i=10;i<15; i+=1) {
+                    MyAlarmManager.addNotification(MainActivity.this, i+100, "multi" + i , "multi" + i , "multi" + i, getTimeSec() + i - 9);
+                }
+
+                for (int i=15;i<20; i+=1) {
+                    MyAlarmManager.addNotification(MainActivity.this, i+100, "multi" + i , "multi" + i , "multi" + i, getTimeSec() + (i-12)*3 );
+                }
+
+                MyAlarmManager.reregisterAlarm(MainActivity.this);
+            }
+
+        });
+    }
+
+    private int getTimeSec(){
+        final EditText timeSec = (EditText)findViewById(R.id.time_sec);
+        return Integer.parseInt(timeSec.getText().toString());
+    }
+
+    private int getCurrentId(){
+        final EditText currentIdText = (EditText)findViewById(R.id.current_id);
+        return Integer.parseInt(currentIdText.getText().toString());
+    }
+
+    private void setCurrentId(int id){
+        final EditText currentIdText = (EditText)findViewById(R.id.current_id);
+        currentIdText.setText(Integer.toString( id));
     }
 
 }

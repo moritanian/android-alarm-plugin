@@ -20,5 +20,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         // 画面起動に必要
         notification.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(notification);
+
+        // 実行したので削除
+        Integer priId = intent.getIntExtra("pri_id" ,0);
+        MyAlarmManager.deleteAlarmFromPrefs(context, priId);
     }
 }

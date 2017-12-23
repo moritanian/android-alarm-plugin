@@ -21,7 +21,6 @@ public class MyAlarmService extends Service {
 
         Thread thr = new Thread(null, mTask, "MyAlarmServiceThread");
         thr.start();
-        Log.v(TAG,"スレッド開始");
 
         return START_STICKY_COMPATIBILITY;
     }
@@ -39,11 +38,17 @@ public class MyAlarmService extends Service {
             // put extra
             alarmBroadcast.putExtras(amIntent);
 
+
+            String type = amIntent.getType();
+            Log.i(TAG, type);
+            //alarmBroadcast.setType(type);
+
+
             // レシーバーへ渡す
             sendBroadcast(alarmBroadcast);
+
             // 役目を終えたサービスを止める
             MyAlarmService.this.stopSelf();
-            Log.v(TAG,"サービス停止");
         }
     };
 }
