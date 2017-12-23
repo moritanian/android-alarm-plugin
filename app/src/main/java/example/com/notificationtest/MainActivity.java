@@ -18,8 +18,6 @@ import android.widget.EditText;
 public class MainActivity extends Activity {
     public final String TAG = MainActivity.class.getName();
 
-    private static final String ACTION_TEXT_UPDATE = "example.com.ACTION_TEXT_UPDATE";
-
     private int aid = 1;
 
     @Override

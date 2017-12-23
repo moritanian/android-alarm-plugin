@@ -134,15 +134,14 @@ public class MyAlarmManager {
         Log.d(TAG, "resetNotification()");
         Intent intent = new Intent(con, MyAlarmService.class);
         intent.setType(getNotificationIntentType(id));
+        intent.setAction(ACTION_NOTIFICATION);
         cancelAmarmManager(con, id, intent);
         deleteNotificationAlarmFromPrefs(con, id);
     }
 
     static void cancelAmarmManager(Context con, int id, Intent intent) {
 
-        PendingIntent sender = PendingIntent.getBroadcast(con, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarm = (AlarmManager) con.getSystemService(Context.ALARM_SERVICE);
-        alarm.cancel(sender);
+        PendingIntent sender = PendingIntent.getService(con, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         sender.cancel();
     }
 
