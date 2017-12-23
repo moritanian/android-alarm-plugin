@@ -27,6 +27,5 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
         Log.i("UpdateBroadcastReceiver", action.toString());
 
         MyAlarmManager.reregisterAlarm(context);
-        //MyAlarmManager.addAlarm(context, 0, 1);
     }
 }

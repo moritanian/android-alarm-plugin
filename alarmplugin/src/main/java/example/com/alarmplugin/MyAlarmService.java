@@ -1,5 +1,6 @@
 package example.com.alarmplugin;
 
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -17,11 +18,10 @@ public class MyAlarmService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       amIntent = intent;
+        amIntent = intent;
 
         Thread thr = new Thread(null, mTask, "MyAlarmServiceThread");
         thr.start();
-        Log.v(TAG,"スレッド開始");
 
         return START_STICKY_COMPATIBILITY;
     }
@@ -39,11 +39,17 @@ public class MyAlarmService extends Service {
             // put extra
             alarmBroadcast.putExtras(amIntent);
 
+
+            String type = amIntent.getType();
+            Log.i(TAG, type);
+            //alarmBroadcast.setType(type);
+
+
             // レシーバーへ渡す
             sendBroadcast(alarmBroadcast);
+
             // 役目を終えたサービスを止める
             MyAlarmService.this.stopSelf();
-            Log.v(TAG,"サービス停止");
         }
     };
 }

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by Moritanian on 2017/12/20.

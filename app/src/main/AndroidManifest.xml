@@ -23,13 +23,15 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="example.com.notificationtest.AlarmReceiver" >
+        <receiver android:name="example.com.notificationtest.AlarmReceiver"
+            android:enabled="true" android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_ALARM"></action>
             </intent-filter>
         </receiver>
 
-        <receiver android:name="example.com.notificationtest.Notifier">
+        <receiver android:name="example.com.notificationtest.Notifier"
+            android:enabled="true" android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_NOTIFICATION"></action>
             </intent-filter>
