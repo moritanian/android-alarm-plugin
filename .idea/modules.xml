@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/alarmplugin/alarmplugin.iml" filepath="$PROJECT_DIR$/alarmplugin/alarmplugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-alarm-plugin.iml" filepath="$PROJECT_DIR$/android-alarm-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/notificationtest.iml" filepath="$PROJECT_DIR$/notificationtest.iml" />
     </modules>
   </component>
 </project>
