@@ -1,4 +1,4 @@
-package example.com.notificationtest;
+package example.com.fileplugin;
 
 import android.Manifest;
 import android.app.Activity;
@@ -10,6 +10,8 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
+
+import com.unity3d.player.UnityPlayer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,12 +26,7 @@ import java.io.IOException;
 
 public class FileDirManager {
 
-    public interface FileSelecterCallback {
-        public void success(Object obj);
-
-        public void failed(Object obj);
-    }
-
+    public static Activity unityActivity;
 
     private static final int REQUEST_PERMISSION = 1000;
 
@@ -86,7 +83,9 @@ public class FileDirManager {
         return file.exists();
     }
 
-    public static void showFileSelecter(Context con, String mimeType) {
+    public static void showFileSelecter(String mimeType) {
+
+        unityActivity = UnityPlayer.currentActivity;
 
         // データを渡す為のBundleを生成し、渡すデータを内包させる
         Bundle bundle = new Bundle();
@@ -95,23 +94,44 @@ public class FileDirManager {
         FIleDirPicker picker = new FIleDirPicker();
         picker.setArguments(bundle);
 
-        FragmentTransaction transaction = ((Activity) con).getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = unityActivity.getFragmentManager().beginTransaction();
 
         transaction.add(picker, TAG);
         transaction.commit();
     }
 
+    public String readFile(String filepath) {
+        String content = "";
+        File file = new File(filepath);
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String body;
+            while ((body = br.readLine()) != null) {
+                content += body;
+            }
+            br.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return content;
+    }
+
     // permissionの確認
-    public static void checkPermission(Context con) {
+    public static void checkPermission() {
+        unityActivity = UnityPlayer.currentActivity;
         // 既に許可している
-        if (ContextCompat.checkSelfPermission(con,
+        if (ContextCompat.checkSelfPermission(unityActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED) {
             setUpReadWriteExternalStorage();
         }
         // 拒否していた場合
         else {
-            requestLocationPermission(con);
+            requestLocationPermission(unityActivity);
         }
     }
 

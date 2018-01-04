@@ -1,1 +1,1 @@
-include ':app', ':alarmplugin'
+include ':app', ':alarmplugin', ':fileplugin'

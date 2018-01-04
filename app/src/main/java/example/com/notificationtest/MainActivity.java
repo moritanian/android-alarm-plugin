@@ -138,7 +138,7 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "onCLicButtonOutput");
                 String path = FileDirManager.getDownloadPath("test.json");
                 Log.d(TAG, "download path = " + path);
-                FileDirManager.saveFile(path, "this is test \n getgetget.");
+                FileDirManager.writeFile(path, "this is test \n getgetget.");
             }
 
         });
