@@ -138,7 +138,7 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "onCLicButtonOutput");
                 String path = FileDirManager.getDownloadPath("test.json");
                 Log.d(TAG, "download path = " + path);
-                FileDirManager.writeFile(path, "this is test \n getgetget.");
+                FileDirManager.writeFileWithNotification(MainActivity.this, path, "this is test \n getgetget.");
             }
 
         });
@@ -158,5 +158,7 @@ public class MainActivity extends Activity {
         final EditText currentIdText = (EditText) findViewById(R.id.current_id);
         currentIdText.setText(Integer.toString(id));
     }
+
+
 
 }

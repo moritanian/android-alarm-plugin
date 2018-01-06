@@ -55,6 +55,14 @@
 
         <service android:name="MyAlarmService"></service>
         <activity android:name="AlarmNotificationActivity"></activity>
+        <activity android:name=".TextViewer">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/*"/>
+                <data android:mimeType="application/json"/>
+            </intent-filter>
+        </activity>
 
     </application>
 
