@@ -35,6 +35,7 @@ public class Notifier extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.icon)
                 .setVibrate(new long[]{0, 200, 100, 200, 100, 200})
                 .setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .build();
 

@@ -27,16 +27,13 @@ public class MyAlarmManager {
     private static final String NOTIFICATION_IDS_PREFS_KEY = "notification-ids-prefs-key";
     private static final String ALARM_IDS_PREFS_KEY = "alarm-ids-prefs-key";
 
-
-    public static Context context;
-
     private static final String TAG = MyAlarmManager.class.getSimpleName();
 
     private static SharedPreferences dataStore;
     private static SharedPreferences.Editor editor;
 
     public static void init(Context con){
-        reregisterAlarm(con);
+        reregister(con);
     }
 
     public static void resetAllAlarms(Context con) {
@@ -82,7 +79,6 @@ public class MyAlarmManager {
     }
 
     public static void addNotification(Context con, int id, String title, String ticker, String text, int secondsFromNow) {
-        context = con;
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, secondsFromNow);
         addNotification(con, id, title, ticker, text, c);
@@ -148,12 +144,12 @@ public class MyAlarmManager {
 
     // でている通知削除
     public static void clearNotification(Context con, int id){
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager)con.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
     }
 
     // 登録していたアラームを再度登録
-    public static void reregisterAlarm(Context con){
+    public static void reregister(Context con){
 
         Log.i("reregister", con.toString());
         setPrefs(con);
@@ -250,23 +246,37 @@ public class MyAlarmManager {
     public static void deleteNotificationAlarmFromPrefs(Context con, int id) {
         deleteAlarmManagerFromPrefs(con, id, NOTIFICATION_IDS_PREFS_KEY);
     }
+
     public static void deleteAlarmFromPrefs(Context con, int id){
         deleteAlarmManagerFromPrefs(con, id, ALARM_IDS_PREFS_KEY);
     }
+
     private static void deleteAlarmManagerFromPrefs(Context con, int id, String prefsKey){
 
-        Log.i("deleteAlarmFromPrefs", prefsKey + id);
-        setPrefs(con);
+        Log.i(TAG, "-- deleteAlarmManagerFromPrefs--- " + prefsKey + id);
 
+        setPrefs(con);
         HashSet<String> ids = (HashSet<String>) dataStore.getStringSet(prefsKey, new HashSet<String>());
-        ids.remove(Integer.toString(id));
+        String idstr = Integer.toString(id);
+        ids.remove(idstr);
+
+        /*
+         androidのバグなのか一度消去しないとxmlが更新されnない。
+         キャッシュされているためか一見は正しく動くが、
+         アプリを再起動したときに前のデータのままになる
+        */
+        editor.remove(prefsKey);
+        editor.apply();
+
         editor.putStringSet(prefsKey, ids);
-        editor.commit();
+        editor.apply();
     }
 
     private static void setPrefs(Context con){
-        dataStore = con.getSharedPreferences(PREFS_NAME, con.MODE_PRIVATE);
-        editor = dataStore.edit();
+        if (dataStore == null || editor == null) {
+            dataStore = con.getSharedPreferences(PREFS_NAME, con.MODE_PRIVATE);
+            editor = dataStore.edit();
+        }
     }
 
     private static HashSet<Integer>  getAlarmIds(Context con){

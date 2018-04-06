@@ -11,7 +11,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
         Log.i("UpdateBroadcastReceiver", "onReceive");
 
         String action = intent.getAction();
-        String packagePath = intent.getDataString(); // package:app.package.name
 
         switch(action) {
             case Intent.ACTION_BOOT_COMPLETED:
@@ -26,6 +25,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
 
         Log.i("UpdateBroadcastReceiver", action.toString());
 
-        MyAlarmManager.reregisterAlarm(context);
+        MyAlarmManager.reregister(context);
     }
 }
