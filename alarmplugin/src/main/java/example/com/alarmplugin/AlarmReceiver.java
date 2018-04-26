@@ -22,7 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         context.startActivity(notification);
 
         // 実行したので削除
-        Integer priId = intent.getIntExtra("pri_id" ,0);
+        Integer priId = intent.getIntExtra(MyAlarmManager.PRIMARY_ID_KEY ,0);
         MyAlarmManager.deleteAlarmFromPrefs(context, priId);
     }
 }

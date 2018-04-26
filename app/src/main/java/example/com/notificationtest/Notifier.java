@@ -18,11 +18,14 @@ public class Notifier extends BroadcastReceiver {
 
         Log.d("AlarmReceiver", "Alarm Received! : " + intent.getIntExtra(Intent.EXTRA_ALARM_COUNT, 0) + " " + intent.getType());
 
+        Integer priId = intent.getIntExtra(MyAlarmManager.PRIMARY_ID_KEY ,0);
+
         //通知がクリックされた時に発行されるIntentの生成
         Intent sendIntent = new Intent(content, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(content, 0, sendIntent, 0);
+        sendIntent.putExtra(MyAlarmManager.PRIMARY_ID_KEY, priId);
 
-        Integer priId = intent.getIntExtra("pri_id" ,0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(content, priId, sendIntent, 0);
+
 
         //通知オブジェクトの生成
         Notification noti = new NotificationCompat.Builder(content)

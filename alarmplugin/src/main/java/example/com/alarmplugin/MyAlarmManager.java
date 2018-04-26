@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import com.unity3d.player.*;
 
 
 public class MyAlarmManager {
@@ -23,8 +25,12 @@ public class MyAlarmManager {
     public static final String ACTION_ALARM = "ACTION_ALARM";
     public static final String ACTION_NOTIFICATION = "ACTION_NOTIFICATION";
 
+    public static final  String PRIMARY_ID_KEY = "pri_key";
+    public static final  String ACTION_KEY = "action";
+
     private static final String PREFS_NAME = "alarm-manager-prefs";
     private static final String NOTIFICATION_IDS_PREFS_KEY = "notification-ids-prefs-key";
+    private static final String CLICKED_NOTIFICATION_ID_PREFS_KEY = "clicked-notification-id-prefs-key";
     private static final String ALARM_IDS_PREFS_KEY = "alarm-ids-prefs-key";
 
     private static final String TAG = MyAlarmManager.class.getSimpleName();
@@ -32,6 +38,7 @@ public class MyAlarmManager {
     private static SharedPreferences dataStore;
     private static SharedPreferences.Editor editor;
 
+    @SuppressWarnings("unused")
     public static void init(Context con){
         reregister(con);
     }
@@ -50,12 +57,14 @@ public class MyAlarmManager {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void resetAll(Context con){
         resetAllAlarms(con);
         resetAllNotificatios(con);
     }
 
 
+    @SuppressWarnings("unused")
     public static void addAlarm(Context con, int id, int secondsFromNow) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, secondsFromNow);
@@ -66,8 +75,8 @@ public class MyAlarmManager {
         Intent intent = new Intent(con, MyAlarmService.class);
         intent.setType(getAlarmIntentType(id));
         intent.setAction(ACTION_ALARM);
-        intent.putExtra("action", ACTION_ALARM);
-        intent.putExtra("pri_id", id);
+        intent.putExtra(ACTION_KEY, ACTION_ALARM);
+        intent.putExtra(PRIMARY_ID_KEY, id);
         setAlarmManager(con, id, intent, c);
 
         setPrefs(con);
@@ -78,6 +87,7 @@ public class MyAlarmManager {
         editor.apply();
     }
 
+    @SuppressWarnings("unused")
     public static void addNotification(Context con, int id, String title, String ticker, String text, int secondsFromNow) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, secondsFromNow);
@@ -90,11 +100,11 @@ public class MyAlarmManager {
         String type =  getNotificationIntentType(id);
         intent.setType(type);
         intent.setAction(ACTION_NOTIFICATION);
-        intent.putExtra("action", ACTION_NOTIFICATION);
+        intent.putExtra(ACTION_KEY, ACTION_NOTIFICATION);
         intent.putExtra("title", title);
         intent.putExtra("ticker", ticker);
         intent.putExtra("text", text);
-        intent.putExtra("pri_id", id);
+        intent.putExtra(PRIMARY_ID_KEY, id);
         setAlarmManager(con, id, intent, c);
 
 
@@ -142,6 +152,7 @@ public class MyAlarmManager {
         sender.cancel();
     }
 
+    @SuppressWarnings("unused")
     // でている通知削除
     public static void clearNotification(Context con, int id){
         NotificationManager notificationManager = (NotificationManager)con.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -295,5 +306,27 @@ public class MyAlarmManager {
             notificationIds.add(Integer.parseInt(idStr));
         }
         return notificationIds;
+    }
+
+    @SuppressWarnings("unused")
+    // push通知タップ
+    public static int getClickedNotificationId(){
+        Context con = UnityPlayer.currentActivity;
+        setPrefs(con);
+        int id=  dataStore.getInt(CLICKED_NOTIFICATION_ID_PREFS_KEY, 0);
+        _setClickedNotificationId(0);
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    public static void setClickedNotificationId(int id){
+        Context con = UnityPlayer.currentActivity;
+        setPrefs(con);
+        _setClickedNotificationId(id);
+    }
+
+    private static  void _setClickedNotificationId(int id){
+        editor.putInt(CLICKED_NOTIFICATION_ID_PREFS_KEY, id);
+        editor.apply();
     }
 }

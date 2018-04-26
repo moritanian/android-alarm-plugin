@@ -21,11 +21,19 @@ public class Notifier extends BroadcastReceiver {
 
         Log.d("AlarmReceiver", "Alarm Received! : " + intent.getIntExtra(Intent.EXTRA_ALARM_COUNT, 0) + " " + intent.getType());
 
-        //通知がクリックされた時に発行されるIntentの生成
-        Intent sendIntent = new Intent(content, UnityPlayerNativeActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(content, 0, sendIntent, 0);
+        Integer priId = intent.getIntExtra(MyAlarmManager.PRIMARY_ID_KEY ,0);
 
-        Integer priId = intent.getIntExtra("pri_id" ,0);
+        //通知がクリックされた時に発行されるIntentの生成
+        Intent sendIntent = new Intent(content, NotificationOnClickActivity.class);
+        sendIntent.putExtra(MyAlarmManager.PRIMARY_ID_KEY, priId);
+        sendIntent.setFlags(
+                Intent.FLAG_ACTIVITY_CLEAR_TOP  // 起動中のアプリがあってもこちらを優先する
+                    |Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED  // 起動中のアプリがあってもこちらを優先する
+                        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS  // 「最近利用したアプリ」に表示させない
+        );
+        PendingIntent pendingIntent = PendingIntent.getActivity(content, priId, sendIntent
+                , PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
 
         //通知オブジェクトの生成
         Notification noti = new NotificationCompat.Builder(content)
@@ -36,7 +44,9 @@ public class Notifier extends BroadcastReceiver {
                 .setVibrate(new long[]{0, 200, 100, 200, 100, 200})
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_HIGH)
+                .setNumber(1)
                 .setContentIntent(pendingIntent)
+
                 .build();
 
         NotificationManager manager = (NotificationManager)content.getSystemService(Context.NOTIFICATION_SERVICE);

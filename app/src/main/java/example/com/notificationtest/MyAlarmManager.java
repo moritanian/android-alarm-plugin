@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,6 +22,9 @@ public class MyAlarmManager {
 
     public static final String ACTION_ALARM = "ACTION_ALARM";
     public static final String ACTION_NOTIFICATION = "ACTION_NOTIFICATION";
+
+    public static final  String PRIMARY_ID_KEY = "pri_key";
+    public static final  String ACTION_KEY = "action";
 
     private static final String PREFS_NAME = "alarm-manager-prefs";
     private static final String NOTIFICATION_IDS_PREFS_KEY = "notification-ids-prefs-key";
@@ -66,8 +70,8 @@ public class MyAlarmManager {
         Intent intent = new Intent(con, MyAlarmService.class);
         intent.setType(getAlarmIntentType(id));
         intent.setAction(ACTION_ALARM);
-        intent.putExtra("action", ACTION_ALARM);
-        intent.putExtra("pri_id", id);
+        intent.putExtra(ACTION_KEY, ACTION_ALARM);
+        intent.putExtra(PRIMARY_ID_KEY, id);
         setAlarmManager(con, id, intent, c);
 
         setPrefs(con);
@@ -90,11 +94,12 @@ public class MyAlarmManager {
         String type =  getNotificationIntentType(id);
         intent.setType(type);
         intent.setAction(ACTION_NOTIFICATION);
-        intent.putExtra("action", ACTION_NOTIFICATION);
+        intent.putExtra(ACTION_KEY, ACTION_NOTIFICATION);
         intent.putExtra("title", title);
         intent.putExtra("ticker", ticker);
         intent.putExtra("text", text);
-        intent.putExtra("pri_id", id);
+        intent.putExtra(PRIMARY_ID_KEY, id);
+
         setAlarmManager(con, id, intent, c);
 
 
@@ -167,7 +172,6 @@ public class MyAlarmManager {
 
     }
 
-
     private static void alarmTimerFunc(final Context con, final Iterator<Integer> alarmIdsIter){
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -180,7 +184,6 @@ public class MyAlarmManager {
             }
         }, 100);
     }
-
 
     private static void reregisterAlarm(Context con, int id, int instantTime){
         String idStr = Integer.toString(id);
@@ -222,7 +225,6 @@ public class MyAlarmManager {
     private static String getNotificationIntentType(int id){
         return "notification_id" + id;
     }
-
 
     private static void reregisterNotification(Context con, int id, int instantTime){
         String title = dataStore.getString("title" + id, "");
@@ -295,5 +297,13 @@ public class MyAlarmManager {
             notificationIds.add(Integer.parseInt(idStr));
         }
         return notificationIds;
+    }
+
+    // push通知タップ
+    public static int getClickedNotificationId(Context con){
+        Intent intent = ((Activity)con).getIntent();
+        int pri_id = intent.getIntExtra(MyAlarmManager.PRIMARY_ID_KEY, 0);
+        intent.putExtra(MyAlarmManager.PRIMARY_ID_KEY, 0);
+        return pri_id;
     }
 }
