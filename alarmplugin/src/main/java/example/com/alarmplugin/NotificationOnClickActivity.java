@@ -33,7 +33,7 @@ public class NotificationOnClickActivity extends Activity {
 
         Intent intent = getIntent();
         int priId = intent.getIntExtra(MyAlarmManager.PRIMARY_ID_KEY, 0);
-        MyAlarmManager.setClickedNotificationId(priId);
+        new MyAlarmManager(this).setClickedNotificationId(priId);
 
         Intent uIntent = new Intent(this, UnityPlayerNativeActivity.class);
         startActivity(uIntent);

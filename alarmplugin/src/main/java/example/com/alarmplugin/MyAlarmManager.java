@@ -4,12 +4,8 @@ package example.com.alarmplugin;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Timer;
 import java.util.TimerTask;
-
-
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,8 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import com.unity3d.player.*;
-
 
 public class MyAlarmManager {
 
@@ -35,51 +29,46 @@ public class MyAlarmManager {
 
     private static final String TAG = MyAlarmManager.class.getSimpleName();
 
-    private static SharedPreferences dataStore;
-    private static SharedPreferences.Editor editor;
+    private SharedPreferences dataStore;
+    private SharedPreferences.Editor editor;
 
-    @SuppressWarnings("unused")
-    public static void init(Context con){
-        reregister(con);
+    private Context context;
+    public MyAlarmManager (Context context){
+        this.context = context;
+        setPrefs();
     }
 
-    public static void resetAllAlarms(Context con) {
-        setPrefs(con);
-        for (int id : getAlarmIds(con)) {
-            resetAlarm(con, id);
+    public void resetAllAlarms() {
+        for (int id : getAlarmIds()) {
+            resetAlarm(id);
         }
     }
 
-    public static void resetAllNotificatios(Context con){
-        setPrefs(con);
-        for (int id : getNotificationIds(con)) {
-            resetNotification(con, id);
+    public void resetAllNotificatios(){
+        for (int id : getNotificationIds()) {
+            resetNotification(id);
         }
     }
 
-    @SuppressWarnings("unused")
-    public static void resetAll(Context con){
-        resetAllAlarms(con);
-        resetAllNotificatios(con);
+    public void resetAll(){
+        resetAllAlarms();
+        resetAllNotificatios();
     }
 
-
-    @SuppressWarnings("unused")
-    public static void addAlarm(Context con, int id, int secondsFromNow) {
+    public void addAlarm(int id, int secondsFromNow) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, secondsFromNow);
-        addAlarm(con, id, c);
+        addAlarm(id, c);
     }
 
-    public static void addAlarm(Context con, int id, Calendar c) {
-        Intent intent = new Intent(con, MyAlarmService.class);
+    public void addAlarm(int id, Calendar c) {
+        Intent intent = new Intent(context, MyAlarmService.class);
         intent.setType(getAlarmIntentType(id));
         intent.setAction(ACTION_ALARM);
         intent.putExtra(ACTION_KEY, ACTION_ALARM);
         intent.putExtra(PRIMARY_ID_KEY, id);
-        setAlarmManager(con, id, intent, c);
+        setAlarmManager(id, intent, c);
 
-        setPrefs(con);
         editor.putLong("alarm-time" + id, c.getTimeInMillis());
         HashSet<String> alarmIds = (HashSet<String>) dataStore.getStringSet(ALARM_IDS_PREFS_KEY, new HashSet<String>());
         alarmIds.add(Integer.toString(id));
@@ -87,16 +76,15 @@ public class MyAlarmManager {
         editor.apply();
     }
 
-    @SuppressWarnings("unused")
-    public static void addNotification(Context con, int id, String title, String ticker, String text, int secondsFromNow) {
+    public void addNotification(int id, String title, String ticker, String text, int secondsFromNow) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, secondsFromNow);
-        addNotification(con, id, title, ticker, text, c);
+        addNotification(id, title, ticker, text, c);
     }
 
-    public static void addNotification(Context con, int id, String title, String ticker, String text, Calendar c) {
+    public void addNotification(int id, String title, String ticker, String text, Calendar c) {
 
-        Intent intent = new Intent(con, MyAlarmService.class);
+        Intent intent = new Intent(context, MyAlarmService.class);
         String type =  getNotificationIntentType(id);
         intent.setType(type);
         intent.setAction(ACTION_NOTIFICATION);
@@ -105,10 +93,8 @@ public class MyAlarmManager {
         intent.putExtra("ticker", ticker);
         intent.putExtra("text", text);
         intent.putExtra(PRIMARY_ID_KEY, id);
-        setAlarmManager(con, id, intent, c);
+        setAlarmManager(id, intent, c);
 
-
-        setPrefs(con);
         editor.putString("title" + id, title);
         editor.putString("ticker" + id, ticker);
         editor.putString("text" + id, text);
@@ -120,80 +106,77 @@ public class MyAlarmManager {
 
     }
 
-    private static void setAlarmManager(Context con, int id, Intent intent, Calendar c) {
+    private void setAlarmManager(int id, Intent intent, Calendar c) {
         Log.i(TAG, "setAlarmManager " + Integer.toString(id) + " " + c.getTimeInMillis());
-        PendingIntent pendingIntent = PendingIntent.getService(con, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager manager = (AlarmManager) con.getSystemService(con.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager manager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
         manager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
-    public static void resetAlarm(Context con, int id) {
+    public void resetAlarm(int id) {
         // アラームのキャンセル
         Log.d(TAG, "resetAlarm");
-        Intent intent = new Intent(con, MyAlarmService.class);
+        Intent intent = new Intent(context, MyAlarmService.class);
         intent.setType(getAlarmIntentType(id));
-        cancelAmarmManager(con, id, intent);
-        deleteAlarmFromPrefs(con, id);
+        cancelAmarmManager(id, intent);
+        deleteAlarmFromPrefs(id);
     }
 
-    public static void resetNotification(Context con, int id) {
+    public void resetNotification(int id) {
         // アラームのキャンセル
         Log.d(TAG, "resetNotification()");
-        Intent intent = new Intent(con, MyAlarmService.class);
+        Intent intent = new Intent(context, MyAlarmService.class);
         intent.setType(getNotificationIntentType(id));
         intent.setAction(ACTION_NOTIFICATION);
-        cancelAmarmManager(con, id, intent);
-        deleteNotificationAlarmFromPrefs(con, id);
+        cancelAmarmManager(id, intent);
+        deleteNotificationAlarmFromPrefs(id);
     }
 
-    static void cancelAmarmManager(Context con, int id, Intent intent) {
+    void cancelAmarmManager(int id, Intent intent) {
 
-        PendingIntent sender = PendingIntent.getService(con, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent sender = PendingIntent.getService(context ,id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         sender.cancel();
     }
 
-    @SuppressWarnings("unused")
     // でている通知削除
-    public static void clearNotification(Context con, int id){
-        NotificationManager notificationManager = (NotificationManager)con.getSystemService(Context.NOTIFICATION_SERVICE);
+    public void clearNotification(int id){
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
     }
 
     // 登録していたアラームを再度登録
-    public static void reregister(Context con){
+    public void reregister(){
 
-        Log.i("reregister", con.toString());
-        setPrefs(con);
+        Log.i("reregister", context.toString());
 
-        final Iterator<Integer> alarmIdsIter = getAlarmIds(con).iterator();
+        final Iterator<Integer> alarmIdsIter = getAlarmIds().iterator();
         if(alarmIdsIter.hasNext()) {
-            alarmTimerFunc(con, alarmIdsIter);
+            alarmTimerFunc(alarmIdsIter);
         }
 
 
-        final Iterator<Integer> notificationIdsIter = getNotificationIds(con).iterator();
+        final Iterator<Integer> notificationIdsIter = getNotificationIds().iterator();
         if(notificationIdsIter.hasNext()) {
-            notificationTimerFunc(con, notificationIdsIter);
+            notificationTimerFunc(notificationIdsIter);
         }
 
     }
 
-
-    private static void alarmTimerFunc(final Context con, final Iterator<Integer> alarmIdsIter){
+    private void alarmTimerFunc(final Iterator<Integer> alarmIdsIter){
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                reregisterAlarm(con, alarmIdsIter.next(), 1);
+                reregisterAlarm(alarmIdsIter.next(), 1);
                 if(alarmIdsIter.hasNext()){
-                    alarmTimerFunc(con, alarmIdsIter);
+                    alarmTimerFunc(alarmIdsIter);
                 }
             }
         }, 100);
     }
 
 
-    private static void reregisterAlarm(Context con, int id, int instantTime){
+    private void reregisterAlarm(int id, int instantTime){
         String idStr = Integer.toString(id);
         long time=  dataStore.getLong("alarm-time" + id, -1);
 
@@ -207,35 +190,35 @@ public class MyAlarmManager {
 
         c.setTimeInMillis(time);
 
-        addAlarm(con, id, c);
+        addAlarm(id, c);
         Log.i("reregister-alarm", idStr);
         Log.i("reregister-time", Long.toString(time - current));
 
     }
 
-    private static void notificationTimerFunc(final Context con, final Iterator<Integer> notificationIdsIter){
+    private void notificationTimerFunc(final Iterator<Integer> notificationIdsIter){
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                reregisterNotification(con, notificationIdsIter.next(), 1);
+                reregisterNotification(notificationIdsIter.next(), 1);
                 if(notificationIdsIter.hasNext()){
-                    notificationTimerFunc(con, notificationIdsIter);
+                    notificationTimerFunc(notificationIdsIter);
                 }
             }
         }, 1000);
     }
 
-    private static String getAlarmIntentType(int id){
+    private String getAlarmIntentType(int id){
         return "alarm_id" + id;
     }
 
-    private static String getNotificationIntentType(int id){
+    private String getNotificationIntentType(int id){
         return "notification_id" + id;
     }
 
 
-    private static void reregisterNotification(Context con, int id, int instantTime){
+    private void reregisterNotification(int id, int instantTime){
         String title = dataStore.getString("title" + id, "");
         String ticker = dataStore.getString("ticker" + id, "");
         String text = dataStore.getString("text" + id, "");
@@ -249,24 +232,23 @@ public class MyAlarmManager {
         }
         c.setTimeInMillis(time);
 
-        addNotification(con, id, title, ticker, text, c);
+        addNotification(id, title, ticker, text, c);
         Log.i("reregister-notification", Integer.toString(id));
         Log.i("reregister-time", Long.toString(time - current));
     }
 
-    public static void deleteNotificationAlarmFromPrefs(Context con, int id) {
-        deleteAlarmManagerFromPrefs(con, id, NOTIFICATION_IDS_PREFS_KEY);
+    public void deleteNotificationAlarmFromPrefs(int id) {
+        deleteAlarmManagerFromPrefs(id, NOTIFICATION_IDS_PREFS_KEY);
     }
 
-    public static void deleteAlarmFromPrefs(Context con, int id){
-        deleteAlarmManagerFromPrefs(con, id, ALARM_IDS_PREFS_KEY);
+    public void deleteAlarmFromPrefs(int id){
+        deleteAlarmManagerFromPrefs(id, ALARM_IDS_PREFS_KEY);
     }
 
-    private static void deleteAlarmManagerFromPrefs(Context con, int id, String prefsKey){
+    private void deleteAlarmManagerFromPrefs(int id, String prefsKey){
 
         Log.i(TAG, "-- deleteAlarmManagerFromPrefs--- " + prefsKey + id);
 
-        setPrefs(con);
         HashSet<String> ids = (HashSet<String>) dataStore.getStringSet(prefsKey, new HashSet<String>());
         String idstr = Integer.toString(id);
         ids.remove(idstr);
@@ -283,14 +265,14 @@ public class MyAlarmManager {
         editor.apply();
     }
 
-    private static void setPrefs(Context con){
+    private void setPrefs(){
         if (dataStore == null || editor == null) {
-            dataStore = con.getSharedPreferences(PREFS_NAME, con.MODE_PRIVATE);
+            dataStore = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
             editor = dataStore.edit();
         }
     }
 
-    private static HashSet<Integer>  getAlarmIds(Context con){
+    private HashSet<Integer>  getAlarmIds(){
         HashSet<Integer> alarmIds = new HashSet<>();
         HashSet<String> alarmIdsStr = (HashSet<String>) dataStore.getStringSet(ALARM_IDS_PREFS_KEY, new HashSet<String>());
         for (String idStr : alarmIdsStr) {
@@ -299,7 +281,7 @@ public class MyAlarmManager {
         return alarmIds;
     }
 
-    private static HashSet<Integer>  getNotificationIds(Context con){
+    private HashSet<Integer>  getNotificationIds(){
         HashSet<Integer> notificationIds = new HashSet<>();
         HashSet<String> notificationIdsStr = (HashSet<String>) dataStore.getStringSet(NOTIFICATION_IDS_PREFS_KEY, new HashSet<String>());
         for (String idStr : notificationIdsStr) {
@@ -308,25 +290,16 @@ public class MyAlarmManager {
         return notificationIds;
     }
 
-    @SuppressWarnings("unused")
     // push通知タップ
-    public static int getClickedNotificationId(){
-        Context con = UnityPlayer.currentActivity;
-        setPrefs(con);
+    public int getClickedNotificationId(){
         int id=  dataStore.getInt(CLICKED_NOTIFICATION_ID_PREFS_KEY, 0);
-        _setClickedNotificationId(0);
+        setClickedNotificationId(0);
         return id;
     }
 
-    @SuppressWarnings("unused")
-    public static void setClickedNotificationId(int id){
-        Context con = UnityPlayer.currentActivity;
-        setPrefs(con);
-        _setClickedNotificationId(id);
-    }
-
-    private static  void _setClickedNotificationId(int id){
+    public void setClickedNotificationId(int id){
         editor.putInt(CLICKED_NOTIFICATION_ID_PREFS_KEY, id);
         editor.apply();
     }
+
 }

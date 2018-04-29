@@ -26,5 +26,12 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile(name:'alarmplugin-debug', ext:'aar')
     testCompile 'junit:junit:4.12'
+}
+
+repositories{
+    flatDir{
+        dirs 'libs'
+    }
 }

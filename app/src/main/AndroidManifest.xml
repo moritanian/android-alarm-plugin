@@ -26,7 +26,7 @@
         </activity>
 
         <receiver
-            android:name="example.com.notificationtest.AlarmReceiver"
+            android:name="example.com.alarmplugin.AlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -35,7 +35,7 @@
         </receiver>
 
         <receiver
-            android:name="example.com.notificationtest.Notifier"
+            android:name="example.com.notificationtest.CustomNotifier"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -43,7 +43,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="example.com.notificationtest.UpdateBroadcastReceiver">
+        <receiver android:name="example.com.alarmplugin.UpdateBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -53,8 +53,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="MyAlarmService"></service>
-        <activity android:name="AlarmNotificationActivity"></activity>
+        <service android:name="example.com.alarmplugin.MyAlarmService"></service>
+        <activity android:name="example.com.alarmplugin.AlarmNotificationActivity"></activity>
         <activity android:name=".TextViewer">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
