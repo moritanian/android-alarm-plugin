@@ -58,4 +58,11 @@ public class AlarmPlugin {
         return getInstance().getClickedNotificationId();
     }
 
+    public static void setNotificationIconResourceId(int id) {
+        getInstance().setNotificationIconResourceId(id);
+    }
+
+    public static void setAudioResourceId(int id) {
+        getInstance().setAudioResourceId(id);
+    }
 }

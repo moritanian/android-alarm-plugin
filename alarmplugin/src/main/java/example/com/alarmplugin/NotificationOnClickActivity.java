@@ -33,10 +33,29 @@ public class NotificationOnClickActivity extends Activity {
 
         Intent intent = getIntent();
         int priId = intent.getIntExtra(MyAlarmManager.PRIMARY_ID_KEY, 0);
+        Log.i("moritanian", "OnClickActivity priId: " + priId);
         new MyAlarmManager(this).setClickedNotificationId(priId);
 
         Intent uIntent = new Intent(this, UnityPlayerNativeActivity.class);
         startActivity(uIntent);
     }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+
+        Log.i("moritanian", "OnCLickactivity OnRestart");
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.i("moritanian", "OnCLickactivity OnResume");
+
+    }
+
+
 
 }

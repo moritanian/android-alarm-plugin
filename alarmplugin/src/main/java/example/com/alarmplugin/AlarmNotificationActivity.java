@@ -33,7 +33,7 @@ public class AlarmNotificationActivity extends Activity {
         // 音を鳴らす
         if (mp == null)
             // resのrawディレクトリにtest.mp3を置いてある
-            mp = MediaPlayer.create(this, R.raw.test);
+            mp = MediaPlayer.create(this, new MyAlarmManager(this).getAudioResourceId());
         mp.start();
     }
 

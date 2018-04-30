@@ -26,21 +26,31 @@ public class Notifier extends BroadcastReceiver {
         //通知がクリックされた時に発行されるIntentの生成
         Intent sendIntent = new Intent(content, getAppClass());
         sendIntent.putExtra(MyAlarmManager.PRIMARY_ID_KEY, priId);
-        /*sendIntent.setFlags(
-                Intent.FLAG_ACTIVITY_CLEAR_TOP  // 起動中のアプリがあってもこちらを優先する
-                    |Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED  // 起動中のアプリがあってもこちらを優先する
-                        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS  // 「最近利用したアプリ」に表示させない
-        );*/
+        /**
+         * OnCLickActivity経由でたちあげたアプリでアプリを切らずに再度
+         * push通知させてクリックしたときの問題
+         * 下のを有効にするとなにも立ち上がらない
+         * コメントアウトすると立ち上がるがOnClickActivityのonCreateがよばれずunityが起動
+         *
+         * ちなみに Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS はバックグラウンドにいくいと消えるので注意
+         */
+        sendIntent.setFlags(
+             //   Intent.FLAG_ACTIVITY_CLEAR_TOP  // 起動中のアプリがあってもこちらを優先する
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+           //             | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED  // 起動中のアプリがあってもこちらを優先する
+                    //    | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS  // 「最近利用したアプリ」に表示させない
+        );
         PendingIntent pendingIntent = PendingIntent.getActivity(content, priId, sendIntent
                 , PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+
+        MyAlarmManager myAlarmManager = new MyAlarmManager(content);
 
         //通知オブジェクトの生成
         Notification noti = new NotificationCompat.Builder(content)
                 .setTicker(intent.getStringExtra("ticker"))
                 .setContentTitle( intent.getStringExtra("title"))
                 .setContentText( intent.getStringExtra("text"))
-                .setSmallIcon(example.com.alarmplugin.R.drawable.icon)
+                .setSmallIcon(myAlarmManager.getNotificationIconResourceId())
                 .setVibrate(new long[]{0, 200, 100, 200, 100, 200})
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_HIGH)
@@ -53,7 +63,7 @@ public class Notifier extends BroadcastReceiver {
         manager.notify(priId, noti);
 
         // 実行されたので削除
-        new MyAlarmManager(content).deleteNotificationAlarmFromPrefs(priId);
+        myAlarmManager.deleteNotificationAlarmFromPrefs(priId);
 
     }
 
@@ -61,8 +71,6 @@ public class Notifier extends BroadcastReceiver {
     protected Class<?> getAppClass(){
         return  NotificationOnClickActivity.class;
     }
-
-    protected Class<?>
 
 }
 

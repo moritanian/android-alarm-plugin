@@ -24,8 +24,10 @@ public class MyAlarmManager {
 
     private static final String PREFS_NAME = "alarm-manager-prefs";
     private static final String NOTIFICATION_IDS_PREFS_KEY = "notification-ids-prefs-key";
-    private static final String CLICKED_NOTIFICATION_ID_PREFS_KEY = "clicked-notification-id-prefs-key";
     private static final String ALARM_IDS_PREFS_KEY = "alarm-ids-prefs-key";
+    private static final String CLICKED_NOTIFICATION_ID_PREFS_KEY = "clicked-notification-id-prefs-key";
+    private static final String NOTIFICATION_ICON_RESOURCEID_PREFS_KEY = "notification-icon-resourceid-prefs-key";
+    private static final String ALRM_AUDIO_RESOURCEID_PREFS_KEY = "alarm-audio-resourceid-prefs-key";
 
     private static final String TAG = MyAlarmManager.class.getSimpleName();
 
@@ -301,5 +303,30 @@ public class MyAlarmManager {
         editor.putInt(CLICKED_NOTIFICATION_ID_PREFS_KEY, id);
         editor.apply();
     }
+
+    /**
+     * configuration
+     */
+    public void setNotificationIconResourceId(int id){
+        editor.putInt(NOTIFICATION_ICON_RESOURCEID_PREFS_KEY, id);
+        editor.apply();
+    }
+
+    public int getNotificationIconResourceId(){
+        int defaultId = context.getApplicationInfo().icon;
+        return dataStore.getInt(NOTIFICATION_ICON_RESOURCEID_PREFS_KEY, defaultId);
+    }
+
+    public void setAudioResourceId(int id){
+        editor.putInt(ALRM_AUDIO_RESOURCEID_PREFS_KEY, id);
+        editor.apply();
+    }
+
+    public int getAudioResourceId(){
+        return dataStore.getInt(ALRM_AUDIO_RESOURCEID_PREFS_KEY, 0);
+    }
+
+
+
 
 }
