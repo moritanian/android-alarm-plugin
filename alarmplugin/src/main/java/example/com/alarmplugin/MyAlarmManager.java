@@ -14,6 +14,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+/*
+    [Prefs data structure]
+    title${id} : String
+    ticker${id} : String
+    text${id} : text
+
+    notification-ids-prefs-key: StringSet
+    alarm-ids-prefs-key: StringSet
+
+
+ */
 public class MyAlarmManager {
 
     public static final String ACTION_ALARM = "ACTION_ALARM";
@@ -27,7 +38,10 @@ public class MyAlarmManager {
     private static final String ALARM_IDS_PREFS_KEY = "alarm-ids-prefs-key";
     private static final String CLICKED_NOTIFICATION_ID_PREFS_KEY = "clicked-notification-id-prefs-key";
     private static final String NOTIFICATION_ICON_RESOURCEID_PREFS_KEY = "notification-icon-resourceid-prefs-key";
-    private static final String ALRM_AUDIO_RESOURCEID_PREFS_KEY = "alarm-audio-resourceid-prefs-key";
+    private static final String ALARM_AUDIO_RESOURCEID_PREFS_KEY = "alarm-audio-resourceid-prefs-key";
+
+    private static final String ALARM_TIME_PREFS_KEY = "alarm-time%d";
+    private static final String NOTIFICATION_TIME_PREFS_KEY = "notification-time%d";
 
     private static final String TAG = MyAlarmManager.class.getSimpleName();
 
@@ -64,6 +78,13 @@ public class MyAlarmManager {
     }
 
     public void addAlarm(int id, Calendar c) {
+
+        if( !validateTime(c)){
+            c.add(Calendar.SECOND, 1);
+            addAlarm(id, c);
+            return;
+        }
+
         Intent intent = new Intent(context, MyAlarmService.class);
         intent.setType(getAlarmIntentType(id));
         intent.setAction(ACTION_ALARM);
@@ -71,7 +92,7 @@ public class MyAlarmManager {
         intent.putExtra(PRIMARY_ID_KEY, id);
         setAlarmManager(id, intent, c);
 
-        editor.putLong("alarm-time" + id, c.getTimeInMillis());
+        editor.putLong(String.format(ALARM_TIME_PREFS_KEY, id), c.getTimeInMillis());
         HashSet<String> alarmIds = (HashSet<String>) dataStore.getStringSet(ALARM_IDS_PREFS_KEY, new HashSet<String>());
         alarmIds.add(Integer.toString(id));
         editor.putStringSet(ALARM_IDS_PREFS_KEY, alarmIds);
@@ -85,6 +106,12 @@ public class MyAlarmManager {
     }
 
     public void addNotification(int id, String title, String ticker, String text, Calendar c) {
+
+        if( !validateTime(c)){
+            c.add(Calendar.SECOND, 1);
+            addNotification(id, title, ticker, text, c);
+            return;
+        }
 
         Intent intent = new Intent(context, MyAlarmService.class);
         String type =  getNotificationIntentType(id);
@@ -100,7 +127,7 @@ public class MyAlarmManager {
         editor.putString("title" + id, title);
         editor.putString("ticker" + id, ticker);
         editor.putString("text" + id, text);
-        editor.putLong("notification-time" + id, c.getTimeInMillis());
+        editor.putLong( String.format( NOTIFICATION_TIME_PREFS_KEY, id), c.getTimeInMillis());
         HashSet<String> notificationIds = (HashSet<String>) dataStore.getStringSet(NOTIFICATION_IDS_PREFS_KEY, new HashSet<String>());
         notificationIds.add(Integer.toString(id));
         editor.putStringSet(NOTIFICATION_IDS_PREFS_KEY, notificationIds);
@@ -180,7 +207,7 @@ public class MyAlarmManager {
 
     private void reregisterAlarm(int id, int instantTime){
         String idStr = Integer.toString(id);
-        long time=  dataStore.getLong("alarm-time" + id, -1);
+        long time = getRegisteredAlarmTime(id);
 
         Calendar c = Calendar.getInstance();
         Long current = c.getTimeInMillis();
@@ -210,21 +237,11 @@ public class MyAlarmManager {
             }
         }, 1000);
     }
-
-    private String getAlarmIntentType(int id){
-        return "alarm_id" + id;
-    }
-
-    private String getNotificationIntentType(int id){
-        return "notification_id" + id;
-    }
-
-
     private void reregisterNotification(int id, int instantTime){
         String title = dataStore.getString("title" + id, "");
         String ticker = dataStore.getString("ticker" + id, "");
         String text = dataStore.getString("text" + id, "");
-        long time=  dataStore.getLong("notification-time" + id, -1);
+        long time=  getRegisteredNotificationTime(id);
 
         Calendar c = Calendar.getInstance();
         Long current = c.getTimeInMillis();
@@ -237,6 +254,22 @@ public class MyAlarmManager {
         addNotification(id, title, ticker, text, c);
         Log.i("reregister-notification", Integer.toString(id));
         Log.i("reregister-time", Long.toString(time - current));
+    }
+
+    private String getAlarmIntentType(int id) {
+        return String.format("alarm_id%d", id);
+    }
+
+    private String getNotificationIntentType(int id) {
+        return String.format("notification_id%d", id);
+    }
+
+    private long getRegisteredAlarmTime(int id){
+        return dataStore.getLong(String.format(ALARM_TIME_PREFS_KEY, id), -1);
+    }
+
+    private long getRegisteredNotificationTime(int id){
+        return dataStore.getLong(String.format(NOTIFICATION_TIME_PREFS_KEY, id), -1);
     }
 
     public void deleteNotificationAlarmFromPrefs(int id) {
@@ -292,6 +325,31 @@ public class MyAlarmManager {
         return notificationIds;
     }
 
+    private boolean validateTime(Calendar c){
+
+        long time = c.getTimeInMillis();
+
+        HashSet<Integer> alarmIds = getAlarmIds();
+        HashSet<Integer> notificationIds = getNotificationIds();
+
+        for(int id : alarmIds){
+            long registeredTime = getRegisteredAlarmTime(id);
+            if( Math.abs( registeredTime - time) < 1000 ){
+                return false;
+            }
+        }
+
+        for(int id : notificationIds){
+            long registeredTime = getRegisteredNotificationTime(id);
+            if( Math.abs( registeredTime - time) < 1000 ){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     // push通知タップ
     public int getClickedNotificationId(){
         int id=  dataStore.getInt(CLICKED_NOTIFICATION_ID_PREFS_KEY, 0);
@@ -318,15 +376,13 @@ public class MyAlarmManager {
     }
 
     public void setAudioResourceId(int id){
-        editor.putInt(ALRM_AUDIO_RESOURCEID_PREFS_KEY, id);
+        editor.putInt(ALARM_AUDIO_RESOURCEID_PREFS_KEY, id);
         editor.apply();
     }
 
     public int getAudioResourceId(){
-        return dataStore.getInt(ALRM_AUDIO_RESOURCEID_PREFS_KEY, 0);
+        return dataStore.getInt(ALARM_AUDIO_RESOURCEID_PREFS_KEY, 0);
     }
-
-
 
 
 }

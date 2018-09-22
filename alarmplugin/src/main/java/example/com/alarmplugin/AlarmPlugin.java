@@ -1,6 +1,8 @@
 package example.com.alarmplugin;
 
 import android.content.Context;
+import android.widget.Toast;
+
 import com.unity3d.player.UnityPlayer;
 
 
@@ -13,9 +15,17 @@ import com.unity3d.player.UnityPlayer;
 @SuppressWarnings("unused")
 public class AlarmPlugin {
 
+    private static MyAlarmManager instance;
+
     private static MyAlarmManager getInstance() {
+
+        if( instance != null) {
+            return instance;
+        }
+
         Context con = UnityPlayer.currentActivity;
-        return new MyAlarmManager(con);
+        instance = new MyAlarmManager(con);
+        return instance;
     }
 
     public static void resetAllAlarms() {
@@ -64,5 +74,10 @@ public class AlarmPlugin {
 
     public static void setAudioResourceId(int id) {
         getInstance().setAudioResourceId(id);
+    }
+
+    /* debug */
+    public static void toast(String message){
+        Toast.makeText(  UnityPlayer.currentActivity, message, Toast.LENGTH_LONG).show();
     }
 }
